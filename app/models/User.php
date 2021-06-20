@@ -44,7 +44,7 @@
 
 
             
-            $this->db->query("INSERT INTO user (ref,name,dob,password) VALUES (:refrence,:name,:dob,:password)");
+            $this->db->query("INSERT INTO user (Ref,name,dob,password) VALUES (:reference,:name,:dob,:password)");
 
             $this->db->bind(':reference', $ref);
             $this->db->bind(':name', $data->name);
