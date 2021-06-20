@@ -1,0 +1,17 @@
+{
+    "name": "adm/vueapp",
+    "autoload": {
+        "psr-4": {
+            "Adm\\Vueapp\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Hamza",
+            "email": "hr.fb001@gmail.com"
+        }
+    ],
+    "require": {
+        "firebase/php-jwt": "^5.3"
+    }
+}
