@@ -35,12 +35,12 @@
 
 
         public function updateAppointment($data){
-            $this->db->query("UPDATE rdv SET 'date'=:date,'startTime'=:startTime,'endTime'=:endTime WHERE 'id'=:id");
+            $this->db->query("UPDATE rdv SET 'date'=:date,'slot'=:slot, WHERE 'clientRef'=:clientRef");
 
-            $this->db->bind(':date', $data['date']);
-            $this->db->bind(':startTime', $data['startTime']);
-            $this->db->bind(':endTime', $data['endTime']);
-            $this->db->bind(':id', $data['id']);
+            $this->db->bind(':date', $data->date);
+            $this->db->bind(':slot', $data->slot);
+            $this->db->bind(':clientRef', $data->clientRef);
+
 
             $this->db->execute();
         }
@@ -52,5 +52,16 @@
             $this->db->bind(':id', $data);
 
             $this->db->execute();
+        }
+
+        public function checkAvailable($data){
+            $this->db->query("SELECT slot FROM rdv WHERE date=:date");
+
+            $this->db->bind(':date', $data);
+
+            $rdv = $this->db->resultSet();
+
+            return $rdv;
+
         }
     }

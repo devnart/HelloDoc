@@ -2,8 +2,7 @@
   <div class="container">
     <div class="inner">
       <input type="text" placeholder="Reference" name="ref" v-model="ref" />
-      <Button @click="setRef" color="primary" icon="fas fa-chevron-right"
-      />
+      <Button @click="setRef" color="primary" icon="fas fa-chevron-right" />
     </div>
   </div>
 </template>
@@ -20,15 +19,14 @@ export default {
   components: {
     Button,
   },
-  methods : {
-    setRef : function(e){
-      e.preventDefault()
-      localStorage.setItem('userkey', this.ref);
-      localStorage.removeItem('key');
-  this.$router.push('/result');
-
-    }
-  }
+  methods: {
+    setRef: function (e) {
+      e.preventDefault();
+      localStorage.setItem("userkey", this.ref);
+      localStorage.removeItem("key");
+      this.$router.push("/result");
+    },
+  },
 };
 </script>
 

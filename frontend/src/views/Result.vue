@@ -13,10 +13,17 @@
       @click="toggleAdd"
     />
 
+
     <form class="check" v-if="isAdd" @submit="fetching">
       <div class="input">
         <label for="date">Date :</label>
-        <input type="date" name="date" id="date" v-model="date" />
+        <input
+          type="date"
+          @change="check"
+          name="date"
+          id="date"
+          v-model="date"
+        />
         <!-- <input type="hidden" name="clientRef" id="clientRef" v-bind:value="clientRef" /> -->
       </div>
       <div class="slots">
@@ -26,11 +33,11 @@
             10:00</label
           >
           <input
-            @change="isSelected"
+            
             type="radio"
             name="slot"
             value="slot1"
-            ref="isSelected"
+            
             v-model="slot"
           />
         </div>
@@ -40,7 +47,8 @@
             12:00</label
           >
           <input
-            @change="isSelected"
+            
+            
             type="radio"
             name="slot"
             value="slot2"
@@ -53,7 +61,8 @@
             04:00</label
           >
           <input
-            @change="isSelected"
+            
+            
             type="radio"
             name="slot"
             value="slot3"
@@ -66,7 +75,84 @@
             06:00</label
           >
           <input
-            @change="isSelected"
+            
+            
+            type="radio"
+            name="slot"
+            value="slot4"
+            v-model="slot"
+          />
+        </div>
+      </div>
+
+      <Button color="primary" text="Reserve" />
+    </form>
+
+    <!-- edit form  -->
+
+    <form class="check" v-if="isEdit" @submit="fetching">
+      <div class="input">
+        <label for="date">Date :</label>
+        <input
+          type="date"
+          @change="check"
+          name="date"
+          id="date"
+          v-model="date"
+        />
+        <!-- <input type="hidden" name="clientRef" id="clientRef" v-bind:value="clientRef" /> -->
+      </div>
+      <div class="slots">
+        <div class="input">
+          <label class="slot" for="slot1"
+            >08:00 <br />
+            10:00</label
+          >
+          <input
+            
+            type="radio"
+            name="slot"
+            value="slot1"
+            
+            v-model="slot"
+          />
+        </div>
+        <div class="input">
+          <label class="slot" for="slot2"
+            >10:00 <br />
+            12:00</label
+          >
+          <input
+            
+            
+            type="radio"
+            name="slot"
+            value="slot2"
+            v-model="slot"
+          />
+        </div>
+        <div class="input">
+          <label class="slot" for="slot3"
+            >02:00 <br />
+            04:00</label
+          >
+          <input
+            
+            
+            type="radio"
+            name="slot"
+            value="slot3"
+            v-model="slot"
+          />
+        </div>
+        <div class="input">
+          <label class="slot" for="slot4"
+            >04:00 <br />
+            06:00</label
+          >
+          <input
+            
+            
             type="radio"
             name="slot"
             value="slot4"
@@ -87,7 +173,12 @@
       <tr v-for="reservation in reservations" :key="reservation.id">
         <td>{{ reservation.id }}</td>
         <td>{{ reservation.date }}</td>
-        <td>{{ reservation.slot }}</td>
+        <td>
+          <span v-if="reservation.slot == 'slot1'">08:00 - 10:00</span>
+          <span v-if="reservation.slot == 'slot2'">10:00 - 12:00</span>
+          <span v-if="reservation.slot == 'slot3'">02:00 - 04:00</span>
+          <span v-if="reservation.slot == 'slot4'">04:00 - 06:00</span>
+        </td>
         <td>
           <i class="fas fa-pen"></i
           ><i @click="deleteData(reservation.id)" class="fas fa-trash"></i>
@@ -98,6 +189,7 @@
 </template>
 
 <script>
+
 import Card from "../components/card.vue";
 import Button from "../components/button.vue";
 
@@ -110,6 +202,7 @@ export default {
   data() {
     return {
       reservations: [],
+      reservedSlots: [],
       isAdd: false,
       date: "",
       slot: "",
@@ -120,6 +213,8 @@ export default {
     toggleAdd: function () {
       this.isAdd = !this.isAdd;
     },
+
+    // Posting to Database
 
     async fetching(e) {
       e.preventDefault();
@@ -147,13 +242,65 @@ export default {
       this.isAdd = false;
     },
 
+    // Get Reserved Slots by Date
+
+    async checkAvailability() {
+      const response = await fetch(
+        `http://localhost/vueapp/AppointementController/check/${this.date}`
+      );
+      const data = await response.json();
+
+      return data;
+    },
+
+    check: function () {
+      this.checkAvailability().then((data) => {
+        this.reservedSlots = data;
+
+        let inputs = document.getElementsByName("slot");
+        //     this.reservedSlots.forEach(element => {
+        //       console.log(element.slot)
+        //     });
+        inputs.forEach((e)=>{
+          e.disabled = false;
+        })
+        for (let i = 0; i < this.reservedSlots.length; i++) {
+          const element = this.reservedSlots[i];
+ 
+          for (let j = 0; j < inputs.length; j++) {
+            const input = inputs[j];
+            
+            if (element.slot == input.value) {
+              // this.disabled = true;
+              input.disabled = true;
+            }
+
+            
+          }
+
+          // console.log(inputs[i].value)
+          // console.log(element.slot)
+          // if (inputs[i].value === element.slot) {
+          //   console.log("ok");
+          // } else {
+          //   console.log('not ok')
+          // }
+        }
+      });
+    },
+
+    // Get Appoientments by Client Refrence
+
     async getData() {
       const response = await fetch(
         `http://localhost/vueapp/AppointementController/getApnt/${this.clientRef}`
       );
       const data = await response.json();
+
       return data;
     },
+
+    // Delete Appoientment by Appoientment ID
 
     async deleteData(id) {
       console.log(id);
@@ -167,12 +314,14 @@ export default {
           },
         }
       );
-      
+
       this.getData().then((data) => {
         this.reservations = data;
       });
     },
   },
+
+  // Assign result to Variable after page mounting
 
   mounted() {
     this.getData().then((data) => {

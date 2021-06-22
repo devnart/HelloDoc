@@ -59,6 +59,11 @@ class AppointementController extends Controller
         $this->AppointmentModel->deleteAppointment($data);
 
     }
+    public function check($data) {
+        $reserved = $this->AppointmentModel->checkAvailable($data);
+        print_r(json_encode($reserved));
+
+    }
 
 
 }
