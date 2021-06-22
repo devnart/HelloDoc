@@ -1,10 +1,10 @@
 <template>
-<router-link to="/">
+
     <div class="card">
         <i :class="icon"></i>
         <h2>{{ title }}</h2>
     </div>
-    </router-link>
+    
 </template>
 
 <script>
@@ -35,7 +35,7 @@ export default ({
 }
 .card:hover {
     transform: scale(1.03);
-    background:#41b883;
+    background:#77ACF1;
 }
 .card:hover i ,.card:hover h2 {
     color: white;

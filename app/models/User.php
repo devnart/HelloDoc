@@ -43,7 +43,6 @@
         public function createUser($ref,$data){
 
 
-            
             $this->db->query("INSERT INTO user (Ref,name,dob,password) VALUES (:reference,:name,:dob,:password)");
 
             $this->db->bind(':reference', $ref);
@@ -52,6 +51,8 @@
             $this->db->bind(':password', $data->password);
 
             $this->db->execute();
+
+            return $this->getUser($ref);
 
         }
     }

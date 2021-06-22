@@ -8,11 +8,10 @@
 
         public function addAppointment($data){
 
-            $this->db->query("INSERT INTO rdv (date,startTime,endTime,clientRef) VALUES (:date,:startTime,:endTime,:clientRef)");
+            $this->db->query("INSERT INTO rdv (date,slot,clientRef) VALUES (:date,:slot,:clientRef)");
 
             $this->db->bind(':date', $data->date);
-            $this->db->bind(':startTime', $data->startTime);
-            $this->db->bind(':endTime', $data->endTime);
+            $this->db->bind(':slot', $data->slot);
             $this->db->bind(':clientRef', $data->clientRef);
 
             

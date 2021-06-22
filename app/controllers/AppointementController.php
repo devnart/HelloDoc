@@ -14,8 +14,9 @@ class AppointementController extends Controller
 
     public function add()
     {
- 
+        // die(var_dump($this->data));
         $apnt = $this->AppointmentModel->addAppointment($this->data);
+        
         if ($apnt) {
             print_r(json_encode(array(
                 "message" => "Appoientment Created with success",
@@ -25,7 +26,7 @@ class AppointementController extends Controller
             print_r(json_encode(array(
                 'error' => "Error",
             )));
-            die();
+            
         }
     }
 
@@ -56,9 +57,7 @@ class AppointementController extends Controller
     public function delete($data)
     {
         $this->AppointmentModel->deleteAppointment($data);
-        print_r(json_encode(array(
-            'message' => "Canceled Succesfully",
-        )));
+
     }
 
 

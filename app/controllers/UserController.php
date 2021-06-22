@@ -1,4 +1,5 @@
 <?php
+
 class UserController extends Controller
 {
 
@@ -27,6 +28,8 @@ class UserController extends Controller
         $ref =  generateRef();
         
         $this->userModel->createUser($ref,$this->data);
+
+        print_r(json_encode($ref));
     }
 
     public function singleUser($data)
