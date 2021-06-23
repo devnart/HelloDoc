@@ -38,20 +38,8 @@ class AppointementController extends Controller
 
     public function update()
     {
-
         $apnt = $this->AppointmentModel->updateAppointment($this->data);
 
-        if ($apnt) {
-            print_r(json_encode(array(
-                "message" => "Appoientment Created with success",
-            )));
-        } else {
-            print_r(json_encode(array(
-                'error' => "Error",
-            )));
-
-            die();
-        }
     }
 
     public function delete($data)

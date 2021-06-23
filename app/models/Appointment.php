@@ -35,11 +35,12 @@
 
 
         public function updateAppointment($data){
-            $this->db->query("UPDATE rdv SET 'date'=:date,'slot'=:slot, WHERE 'clientRef'=:clientRef");
+            
+            $this->db->query("UPDATE rdv SET date=:date,slot=:slot WHERE id=:id");
 
             $this->db->bind(':date', $data->date);
             $this->db->bind(':slot', $data->slot);
-            $this->db->bind(':clientRef', $data->clientRef);
+            $this->db->bind(':id', $data->id);
 
 
             $this->db->execute();

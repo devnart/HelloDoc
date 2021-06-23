@@ -13,7 +13,6 @@
       @click="toggleAdd"
     />
 
-
     <form class="check" v-if="isAdd" @submit="fetching">
       <div class="input">
         <label for="date">Date :</label>
@@ -32,56 +31,28 @@
             >08:00 <br />
             10:00</label
           >
-          <input
-            
-            type="radio"
-            name="slot"
-            value="slot1"
-            
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot1" v-model="slot" />
         </div>
         <div class="input">
           <label class="slot" for="slot2"
             >10:00 <br />
             12:00</label
           >
-          <input
-            
-            
-            type="radio"
-            name="slot"
-            value="slot2"
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot2" v-model="slot" />
         </div>
         <div class="input">
           <label class="slot" for="slot3"
             >02:00 <br />
             04:00</label
           >
-          <input
-            
-            
-            type="radio"
-            name="slot"
-            value="slot3"
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot3" v-model="slot" />
         </div>
         <div class="input">
           <label class="slot" for="slot4"
             >04:00 <br />
             06:00</label
           >
-          <input
-            
-            
-            type="radio"
-            name="slot"
-            value="slot4"
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot4" v-model="slot" />
         </div>
       </div>
 
@@ -90,7 +61,7 @@
 
     <!-- edit form  -->
 
-    <form class="check" v-if="isEdit" @submit="fetching">
+    <form class="check" v-if="isEdit" @submit="updateData">
       <div class="input">
         <label for="date">Date :</label>
         <input
@@ -108,60 +79,32 @@
             >08:00 <br />
             10:00</label
           >
-          <input
-            
-            type="radio"
-            name="slot"
-            value="slot1"
-            
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot1" v-model="slot" />
         </div>
         <div class="input">
           <label class="slot" for="slot2"
             >10:00 <br />
             12:00</label
           >
-          <input
-            
-            
-            type="radio"
-            name="slot"
-            value="slot2"
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot2" v-model="slot" />
         </div>
         <div class="input">
           <label class="slot" for="slot3"
             >02:00 <br />
             04:00</label
           >
-          <input
-            
-            
-            type="radio"
-            name="slot"
-            value="slot3"
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot3" v-model="slot" />
         </div>
         <div class="input">
           <label class="slot" for="slot4"
             >04:00 <br />
             06:00</label
           >
-          <input
-            
-            
-            type="radio"
-            name="slot"
-            value="slot4"
-            v-model="slot"
-          />
+          <input type="radio" name="slot" value="slot4" v-model="slot" />
         </div>
       </div>
 
-      <Button color="primary" text="Reserve" />
+      <Button color="primary" text="Update" />
     </form>
     <table v-if="!isAdd">
       <tr>
@@ -180,7 +123,12 @@
           <span v-if="reservation.slot == 'slot4'">04:00 - 06:00</span>
         </td>
         <td>
-          <i class="fas fa-pen"></i
+          <i
+            @click="
+              toggleEdit(reservation.id, reservation.date, reservation.slot)
+            "
+            class="fas fa-pen"
+          ></i
           ><i @click="deleteData(reservation.id)" class="fas fa-trash"></i>
         </td>
       </tr>
@@ -189,7 +137,6 @@
 </template>
 
 <script>
-
 import Card from "../components/card.vue";
 import Button from "../components/button.vue";
 
@@ -201,9 +148,11 @@ export default {
 
   data() {
     return {
+      currentId: "",
       reservations: [],
       reservedSlots: [],
       isAdd: false,
+      isEdit: false,
       date: "",
       slot: "",
       clientRef: localStorage.getItem("userkey"),
@@ -212,6 +161,13 @@ export default {
   methods: {
     toggleAdd: function () {
       this.isAdd = !this.isAdd;
+      this.isEdit = false;
+    },
+    toggleEdit: function (id, date, slot) {
+      this.currentId = id;
+      this.isEdit = true;
+      this.date = date;
+      this.slot = slot;
     },
 
     // Posting to Database
@@ -261,30 +217,20 @@ export default {
         //     this.reservedSlots.forEach(element => {
         //       console.log(element.slot)
         //     });
-        inputs.forEach((e)=>{
+        inputs.forEach((e) => {
           e.disabled = false;
-        })
+        });
         for (let i = 0; i < this.reservedSlots.length; i++) {
           const element = this.reservedSlots[i];
- 
+
           for (let j = 0; j < inputs.length; j++) {
             const input = inputs[j];
-            
+
             if (element.slot == input.value) {
               // this.disabled = true;
               input.disabled = true;
             }
-
-            
           }
-
-          // console.log(inputs[i].value)
-          // console.log(element.slot)
-          // if (inputs[i].value === element.slot) {
-          //   console.log("ok");
-          // } else {
-          //   console.log('not ok')
-          // }
         }
       });
     },
@@ -298,6 +244,32 @@ export default {
       const data = await response.json();
 
       return data;
+    },
+
+    // Update Appoientment by Appoientment ID
+
+    async updateData(e) {
+      e.preventDefault();
+      const resp = await fetch(
+        "http://localhost/vueapp/AppointementController/update",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify({
+            date: this.date,
+            slot: this.slot,
+            id: this.currentId,
+          }),
+        }
+      );
+
+      this.getData().then((data) => {
+        this.reservations = data;
+      });
+      this.isEdit = false;
     },
 
     // Delete Appoientment by Appoientment ID
@@ -332,15 +304,22 @@ export default {
 </script>
 
 <style scoped>
-.checked {
-  background: #000;
+input {
+  box-sizing: border-box;
 }
+
 .container {
   flex-direction: column;
 }
 
 .slots {
   display: flex;
+  gap: 20px;
+}
+
+i {
+  cursor: pointer;
+  margin: 5px;
 }
 table {
   width: 70%;
